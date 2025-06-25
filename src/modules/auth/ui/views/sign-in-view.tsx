@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { OctagonAlert } from "lucide-react";
+import { Loader2, OctagonAlert } from "lucide-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -15,10 +15,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+
+import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -26,6 +29,11 @@ const formSchema = z.object({
 });
 
 export const SignInView = () => {
+  const router = useRouter();
+
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,10 +43,22 @@ export const SignInView = () => {
   });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    authClient.signIn.email({
-      email: data.email,
-      password: data.password,
-    });
+    setIsLoading(true);
+    authClient.signIn.email(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: () => {
+          router.push("/");
+        },
+        onError: ({ error }) => {
+          setError(error.message);
+          setIsLoading(false);
+        },
+      }
+    );
   };
 
   return (
@@ -92,31 +112,28 @@ export const SignInView = () => {
                         </FormItem>
                       )}
                     />
-                    {true && (
+                    {!!error && (
                       <Alert
                         variant="destructive"
-                        className="bg-destructive/10 flex items-center gap-2 border-0 "
+                        className="bg-destructive/10 flex items-center gap-2 border-0 text-left w-full"
                       >
                         <OctagonAlert className="h-4 w-4" />
                         <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>
-                          Invalid email or password
-                        </AlertDescription>
+                        <AlertDescription>{error}</AlertDescription>
                       </Alert>
                     )}
                     <Button
+                      disabled={isLoading}
                       type="submit"
                       className="w-full bg-[#0f0f0f] cursor-pointer"
                     >
-                      Sign in
+                      {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sign in"}
                     </Button>
-                    <p className="text-sm text-muted-foreground">
-                      Don&apos;t have an account?{" "}
-                      <Link href="/sign-up">Sign up</Link>
-                    </p>
                     <div className="flex items-center w-full my-2">
                       <div className="flex-1 h-px bg-border" />
-                      <span className="mx-3 text-sm text-muted-foreground whitespace-nowrap">Or continue with</span>
+                      <span className="mx-3 text-sm text-muted-foreground whitespace-nowrap">
+                        Or continue with
+                      </span>
                       <div className="flex-1 h-px bg-border" />
                     </div>
                     <div className="grid grid-cols-2 gap-4 w-full">
@@ -133,6 +150,16 @@ export const SignInView = () => {
                         Apple
                       </Button>
                     </div>
+
+                    <p className="text-sm text-muted-foreground">
+                      Don&apos;t have an account?{" "}
+                      <Link
+                        href="/sign-up"
+                        className="text-primary hover:underline"
+                      >
+                        Sign up
+                      </Link>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -143,6 +170,16 @@ export const SignInView = () => {
           </div> */}
         </CardContent>
       </Card>
+      <p className="text-sm text-muted-foreground">
+        By clicking continue, you agree to our{" "}
+        <Link href="/terms" className="text-primary hover:underline">
+          Terms of Service
+        </Link>{" "}
+        and{" "}
+        <Link href="/privacy" className="text-primary hover:underline">
+          Privacy Policy
+        </Link>
+      </p>
     </div>
   );
 };
