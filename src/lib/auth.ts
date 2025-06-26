@@ -13,4 +13,19 @@ export const auth = betterAuth({
       ...schema,
     }
   }),
+  trustedOrigins: [
+    "http://localhost:3000",
+    "http://localhost:3001", 
+    "https://neuralife.onrender.com",
+    "https://www.neuralife.onrender.com"
+  ],
+  cors: {
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://neuralife.onrender.com", 
+      "https://www.neuralife.onrender.com"
+    ],
+    credentials: true,
+  },
 });
