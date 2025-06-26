@@ -6,16 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:pull": "drizzle-kit pull",
-    "db:reset": "drizzle-kit reset",
-    "db:verify": "drizzle-kit verify",
-    "db:check": "drizzle-kit check",
-    "db:diff": "drizzle-kit diff"
+    "lint": "next lint"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
@@ -53,7 +44,6 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
-    "drizzle-kit": "^0.31.2",
     "drizzle-orm": "^0.44.2",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
