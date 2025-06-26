@@ -13,8 +13,4 @@ export const auth = betterAuth({
       ...schema,
     }
   }),
-  trustedOrigins: [
-    "http://localhost:3000",
-    "https://neuralife.onrender.com"
-  ],
 });
