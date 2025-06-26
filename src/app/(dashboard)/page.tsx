@@ -3,29 +3,23 @@
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
 
   const { data: session } = authClient.useSession();
 
-  useEffect(() => {
-    if (!session) {
-      router.push("/sign-in");
-    }
-  }, [session, router]);
 
   if (session) {
     return (
-      <div>
-        <h1>User is logged in {session.user.name}</h1>
-        <Button onClick={() => authClient.signOut()} className="cursor-pointer">
+      <div className="flex flex-col gap-4 p-4">
+        <h1 className="font-medium">Logged in as {session.user.name}!</h1>
+        <Button onClick={() => authClient.signOut()} className="cursor-pointer w-full">
           Sign Out
         </Button>
       </div>
     );
   } else {
-    return <div>Loading...</div>;
+    return router.push("/sign-in");
   }
 }

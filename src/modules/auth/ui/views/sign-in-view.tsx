@@ -32,7 +32,7 @@ export const SignInView = () => {
   const router = useRouter();
 
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,7 +43,7 @@ export const SignInView = () => {
   });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
+    setIsPending(true);
     authClient.signIn.email(
       {
         email: data.email,
@@ -55,7 +55,7 @@ export const SignInView = () => {
         },
         onError: ({ error }) => {
           setError(error.message);
-          setIsLoading(false);
+          setIsPending(false);
         },
       }
     );
@@ -128,11 +128,11 @@ export const SignInView = () => {
                       </Alert>
                     )}
                     <Button
-                      disabled={isLoading}
+                      disabled={isPending}
                       type="submit"
                       className="w-full bg-[#0f0f0f] cursor-pointer"
                     >
-                      {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sign in"}
+                      {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sign in"}
                     </Button>
                     <div className="flex items-center w-full my-2">
                       <div className="flex-1 h-px bg-border" />
