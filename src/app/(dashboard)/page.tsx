@@ -6,9 +6,8 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function Home() {
-
   const router = useRouter();
-  
+
   const { data: session } = authClient.useSession();
 
   useEffect(() => {
@@ -21,7 +20,9 @@ export default function Home() {
     return (
       <div>
         <h1>User is logged in {session.user.name}</h1>
-        <Button onClick={() => authClient.signOut()}>Sign Out</Button>
+        <Button onClick={() => authClient.signOut()} className="cursor-pointer">
+          Sign Out
+        </Button>
       </div>
     );
   } else {

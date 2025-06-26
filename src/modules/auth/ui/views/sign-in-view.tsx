@@ -63,8 +63,13 @@ export const SignInView = () => {
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center h-screen p-4 ">
-      <img src="/neura.svg" alt="Neura" className="w-[50px] h-[50px]" />
-      <h1 className="text-2xl font-bold">Sign in</h1>
+      <div className="flex flex-col p-2 items-center justify-center">
+        <img src="/neura.svg" alt="Neura" className="w-[50px] h-[50px]" />
+        <h1 className="text-2xl font-bold">Sign in</h1>
+        <p className="text-sm text-muted-foreground">
+          Sign in to your account to continue
+        </p>
+      </div>
       <Card className="overflow-hidden p-0 !border-0 w-full max-w-md">
         <CardContent className="grid p-0">
           <Form {...form}>
