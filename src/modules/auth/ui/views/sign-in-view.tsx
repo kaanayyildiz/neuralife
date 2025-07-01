@@ -33,6 +33,7 @@ export const SignInView = () => {
 
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,6 +42,15 @@ export const SignInView = () => {
       password: "",
     },
   });
+
+  const email = form.watch("email");
+  const password = form.watch("password");
+
+  const handleContinue = () => {
+    if (email && !showPassword) {
+      setShowPassword(true);
+    }
+  };
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     setIsPending(true);
@@ -61,6 +71,15 @@ export const SignInView = () => {
     );
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email && !showPassword) {
+      handleContinue();
+    } else if (email && password) {
+      form.handleSubmit(onSubmit)(e);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4 items-center justify-center h-screen p-4 ">
       <div className="flex flex-col p-2 items-center justify-center">
@@ -73,7 +92,7 @@ export const SignInView = () => {
       <Card className="overflow-hidden p-0 !border-0 w-full max-w-md">
         <CardContent className="grid p-0">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
+            <form onSubmit={handleSubmit} className="p-6 md:p-8">
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="grid gap-4 w-full">
@@ -97,26 +116,28 @@ export const SignInView = () => {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="password"
-                              placeholder="********"
-                              {...field}
-                              className={cn(
-                                "h-10 w-full min-w-0 rounded-md md:text-sm"
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    {showPassword && (
+                      <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                placeholder="********"
+                                {...field}
+                                className={cn(
+                                  "h-10 w-full min-w-0 rounded-md md:text-sm"
+                                )}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                     {!!error && (
                       <Alert
                         variant="destructive"
@@ -128,14 +149,16 @@ export const SignInView = () => {
                       </Alert>
                     )}
                     <Button
-                      disabled={isPending}
+                      disabled={isPending || !email || (showPassword && !password)}
                       type="submit"
                       className="w-full cursor-pointer"
                     >
                       {isPending ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
+                      ) : showPassword ? (
                         "Sign in"
+                      ) : (
+                        "Continue"
                       )}
                     </Button>
                     <div className="flex items-center w-full my-2">
