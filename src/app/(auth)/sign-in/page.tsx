@@ -4,7 +4,7 @@ const SignInPage = () => {
 
 
   return (
-    <div className='bg-white text-[#0f0f0f] flex justify-center items-center'>
+    <div className='bg-muted text-[#0f0f0f] flex justify-center items-center'>
       <div className='w-full'>
         <SignInView />
       </div>

@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, OctagonAlert } from "lucide-react";
+import { Loader2, OctagonAlert, Github, Chrome } from "lucide-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -32,7 +32,8 @@ export const SignInView = () => {
   const router = useRouter();
 
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,8 +43,17 @@ export const SignInView = () => {
     },
   });
 
+  const emailValue = form.watch("email");
+  const passwordValue = form.watch("password");
+
+  const handleEmailContinue = () => {
+    if (emailValue && !form.formState.errors.email) {
+      setShowPassword(true);
+    }
+  };
+
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
+    setIsPending(true);
     authClient.signIn.email(
       {
         email: data.email,
@@ -55,20 +65,34 @@ export const SignInView = () => {
         },
         onError: ({ error }) => {
           setError(error.message);
-          setIsLoading(false);
+          setIsPending(false);
         },
       }
     );
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!showPassword) {
+      handleEmailContinue();
+    } else {
+      form.handleSubmit(onSubmit)(e);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4 items-center justify-center h-screen p-4 ">
-      <img src="/neura.svg" alt="Neura" className="w-[50px] h-[50px]" />
-      <h1 className="text-2xl font-bold">Sign in</h1>
+      <div className="flex flex-col p-2 items-center justify-center">
+        <img src="/neura.svg" alt="Neura" className="w-[50px] h-[50px]" />
+        <h1 className="text-2xl font-bold">Sign in</h1>
+        <p className="text-sm text-muted-foreground">
+          Sign in to your account to continue
+        </p>
+      </div>
       <Card className="overflow-hidden p-0 !border-0 w-full max-w-md">
         <CardContent className="grid p-0">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
+            <form onSubmit={handleSubmit} className="p-6 md:p-8">
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="grid gap-4 w-full">
@@ -92,26 +116,28 @@ export const SignInView = () => {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="password"
-                              placeholder="********"
-                              {...field}
-                              className={cn(
-                                "h-10 w-full min-w-0 rounded-md md:text-sm"
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    {showPassword && (
+                      <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                placeholder="********"
+                                {...field}
+                                className={cn(
+                                  "h-10 w-full min-w-0 rounded-md md:text-sm"
+                                )}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                     {!!error && (
                       <Alert
                         variant="destructive"
@@ -123,33 +149,43 @@ export const SignInView = () => {
                       </Alert>
                     )}
                     <Button
-                      disabled={isLoading}
+                      disabled={isPending || (!showPassword && !emailValue) || (showPassword && !passwordValue)}
                       type="submit"
-                      className="w-full bg-[#0f0f0f] cursor-pointer"
+                      className="w-full cursor-pointer"
                     >
-                      {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sign in"}
+                      {isPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : showPassword ? (
+                        "Sign in"
+                      ) : (
+                        "Continue"
+                      )}
                     </Button>
-                    <div className="flex items-center w-full my-2">
-                      <div className="flex-1 h-px bg-border" />
-                      <span className="mx-3 text-sm text-muted-foreground whitespace-nowrap">
-                        Or continue with
-                      </span>
-                      <div className="flex-1 h-px bg-border" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 w-full">
-                      <Button
-                        variant="outline"
-                        className="w-full bg-white text-black"
-                      >
-                        Google
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full bg-white text-black"
-                      >
-                        Apple
-                      </Button>
-                    </div>
+                    {showPassword && (
+                      <>
+                        <div className="flex items-center w-full my-2">
+                          <div className="flex-1 h-px bg-border" />
+                          <span className="mx-3 text-sm text-muted-foreground whitespace-nowrap">
+                            Or continue with
+                          </span>
+                          <div className="flex-1 h-px bg-border" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 w-full">
+                          <Button
+                            variant="outline"
+                            className="w-full bg-white text-black"
+                          >
+                            <Chrome className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="w-full bg-white text-black"
+                          >
+                            <Github className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </>
+                    )}
 
                     <p className="text-sm text-muted-foreground">
                       Don&apos;t have an account?{" "}
