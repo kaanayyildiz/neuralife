@@ -18,6 +18,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import DashboardUserButton from "./dashboard-user-button";
 import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
 
 const firstSection = [
   {
@@ -42,9 +43,10 @@ const secondSection = [
 
 
 const DashboardSidebar = () => {
+
   const pathname = usePathname();
   return (
-    <Sidebar className="bg-primary">
+    <Sidebar>
       <SidebarContent>
         <SidebarGroup>
           <SidebarHeader className="flex items-center gap-2">
@@ -65,14 +67,14 @@ const DashboardSidebar = () => {
                 <SidebarMenuButton
                   asChild
                   className={cn(
-                    "h-10 hover:bg-linear-to-r/oklch border border-transparent hover:border-[#212121]/10 from-sidebar-accent from-5% via-30% via-sidebar/50 to-sidebar/90",
+                    "h-10 hover:bg-linear-to-r/oklch border border-transparent",
                     pathname === item.href && "bg-linear-to-r/oklch"
                   )}
                   isActive={pathname === item.href}
                 >
                   <Link
                     href={item.href}
-                    className="flex items-center gap-2 text-sm font-normal tracking-tight"
+                    className="flex items-center gap-2 text-sm font-normal tracking-tight text-primary-foreground"
                   >
                     {item.icon} {item.title}
                   </Link>
@@ -89,12 +91,12 @@ const DashboardSidebar = () => {
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild
                   className={cn(
-                    "h-10 hover:bg-linear-to-r/oklch border border-transparent hover:border-[#212121]/10 from-sidebar-accent from-5% via-30% via-sidebar/50 to-sidebar/90",
+                    "h-10 hover:bg-linear-to-r/oklch border border-transparent bg-primary-foreground/10",
                     pathname === item.href && "bg-linear-to-r/oklch"
                   )}
                   isActive={pathname === item.href}
                   >
-                  <Link href={item.href} className="flex items-center gap-2 text-sm font-normal tracking-tight">
+                  <Link href={item.href} className="flex items-center gap-2 text-sm font-normal tracking-tight text-primary-foreground">
                     {item.icon} {item.title}
                   </Link>
                 </SidebarMenuButton>
@@ -107,7 +109,7 @@ const DashboardSidebar = () => {
         <Separator className="opacity-10" />
         <div className="flex flex-col gap-2">
           <DashboardUserButton />
-          <Button variant="ghost" size="sm" className="w-full justify-start">
+          <Button variant="ghost" size="sm" className="w-full justify-start text-primary-foreground cursor-pointer" onClick={() => authClient.signOut()}>
             <LogOutIcon className="w-4 h-4 mr-2" />
             Logout
           </Button>

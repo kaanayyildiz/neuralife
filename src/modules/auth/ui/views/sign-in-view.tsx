@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, OctagonAlert } from "lucide-react";
+import { Loader2, OctagonAlert, Github, Chrome } from "lucide-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -130,9 +130,13 @@ export const SignInView = () => {
                     <Button
                       disabled={isPending}
                       type="submit"
-                      className="w-full bg-[#0f0f0f] cursor-pointer"
+                      className="w-full cursor-pointer"
                     >
-                      {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sign in"}
+                      {isPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        "Sign in"
+                      )}
                     </Button>
                     <div className="flex items-center w-full my-2">
                       <div className="flex-1 h-px bg-border" />
@@ -146,13 +150,13 @@ export const SignInView = () => {
                         variant="outline"
                         className="w-full bg-white text-black"
                       >
-                        Google
+                        <Chrome className="w-4 h-4" />
                       </Button>
                       <Button
                         variant="outline"
                         className="w-full bg-white text-black"
                       >
-                        Apple
+                        <Github className="w-4 h-4" />
                       </Button>
                     </div>
 
