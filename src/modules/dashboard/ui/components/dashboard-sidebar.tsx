@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { BotIcon, VideoIcon, StarIcon, LogOutIcon } from "lucide-react";
+import { BotIcon, VideoIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
