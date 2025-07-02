@@ -108,7 +108,7 @@ export const SignInView = () => {
                               placeholder="mail@example.com"
                               {...field}
                               className={cn(
-                                "h-10 w-full min-w-0 rounded-md md:text-sm"
+                                "h-14 w-full min-w-0 rounded-md md:text-sm"
                               )}
                             />
                           </FormControl>
@@ -129,7 +129,7 @@ export const SignInView = () => {
                                 placeholder="********"
                                 {...field}
                                 className={cn(
-                                  "h-10 w-full min-w-0 rounded-md md:text-sm"
+                                  "h-14 w-full min-w-0 rounded-md md:text-sm"
                                 )}
                               />
                             </FormControl>
@@ -151,7 +151,7 @@ export const SignInView = () => {
                     <Button
                       disabled={isPending || !email || (showPassword && !password)}
                       type="submit"
-                      className="w-full cursor-pointer"
+                      className="w-full cursor-pointer" size="lg"
                     >
                       {isPending ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
