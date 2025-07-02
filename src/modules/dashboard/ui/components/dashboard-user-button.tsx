@@ -32,6 +32,16 @@ const DashboardUserButton = () => {
     return null;
   }
 
+  const onLogout = () => {
+    authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/sign-in");
+        },
+      },
+    });
+  };
+
   if (isMobile) {
     return (
       <Drawer>
@@ -72,7 +82,11 @@ const DashboardUserButton = () => {
             <Button variant="outline" className="cursor-pointer">
               <span>Notifications</span>
             </Button>
-            <Button variant="outline" className="cursor-pointer">
+            <Button
+              onClick={onLogout}
+              variant="outline"
+              className="cursor-pointer"
+            >
               <span>Log out</span>
             </Button>
           </DrawerFooter>
@@ -80,16 +94,6 @@ const DashboardUserButton = () => {
       </Drawer>
     );
   }
-
-  const onLogout = () => {
-    authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/sign-in");
-        },
-      },
-    });
-  };
 
   return (
     <DropdownMenu>
