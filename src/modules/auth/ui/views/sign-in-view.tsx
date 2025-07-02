@@ -20,8 +20,8 @@ import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -29,7 +29,6 @@ const formSchema = z.object({
 });
 
 export const SignInView = () => {
-  const router = useRouter();
 
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
@@ -58,10 +57,11 @@ export const SignInView = () => {
       {
         email: data.email,
         password: data.password,
+        callbackURL: '/',
       },
       {
         onSuccess: () => {
-          router.push("/");
+          setIsPending(false);
         },
         onError: ({ error }) => {
           setError(error.message);
@@ -80,10 +80,29 @@ export const SignInView = () => {
     }
   };
 
+  const onSocial = (provider: "google" | "github") => {
+    setError(null);
+    setIsPending(true);
+    
+    authClient.signIn.social({
+      provider: provider,
+      callbackURL: '/',
+      fetchOptions: {
+        onSuccess: () => {
+          setIsPending(false);
+        },
+        onError: ({ error }) => {
+          setError(error.message);
+          setIsPending(false);
+        },
+      },
+    });
+  };
+
   return (
     <div className="flex flex-col gap-4 items-center justify-center h-screen p-4 ">
       <div className="flex flex-col p-2 items-center justify-center">
-        <img src="/neura.svg" alt="Neura" className="w-[50px] h-[50px]" />
+        <Image src="/neura.svg" alt="Neura" width={50} height={50} />
         <h1 className="text-2xl font-bold">Sign in</h1>
         <p className="text-sm text-muted-foreground">
           Sign in to your account to continue
@@ -149,9 +168,12 @@ export const SignInView = () => {
                       </Alert>
                     )}
                     <Button
-                      disabled={isPending || !email || (showPassword && !password)}
+                      disabled={
+                        isPending || !email || (showPassword && !password)
+                      }
                       type="submit"
-                      className="w-full cursor-pointer" size="lg"
+                      className="w-full cursor-pointer"
+                      size="lg"
                     >
                       {isPending ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -171,7 +193,8 @@ export const SignInView = () => {
                     <div className="grid grid-cols-2 gap-4 w-full">
                       <Button
                         variant="outline"
-                        className="w-full bg-white text-black"
+                        className="w-full bg-white text-black cursor-pointer"
+                        onClick={() => onSocial("google")}
                       >
                         <Chrome className="w-4 h-4" />
                       </Button>

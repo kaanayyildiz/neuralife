@@ -20,8 +20,8 @@ import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image";
 
 const formSchema = z
   .object({
@@ -36,10 +36,9 @@ const formSchema = z
   });
 
 export const SignUpView = () => {
-  const router = useRouter();
 
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsPending] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,20 +51,22 @@ export const SignUpView = () => {
   });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
+    setIsPending(true);
+    setError(null);
     authClient.signUp.email(
       {
         name: data.name,
         email: data.email,
         password: data.password,
+        callbackURL: '/',
       },
       {
         onSuccess: () => {
-          router.push("/");
+          setIsPending(false);
         },
         onError: ({ error }) => {
           setError(error.message);
-          setIsLoading(false);
+          setIsPending(false);
         },
       }
     );
@@ -73,7 +74,7 @@ export const SignUpView = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen p-4 gap-4">
-      <img src="/neura.svg" alt="Neura" className="w-[50px] h-[50px]" />
+      <Image src="/neura.svg" alt="Neura" width={50} height={50} />
       <div className="flex flex-col p-2 items-center justify-center">
       <h1 className="text-2xl font-bold">Let&apos;s get you started</h1>
       <p className="text-sm text-muted-foreground">
