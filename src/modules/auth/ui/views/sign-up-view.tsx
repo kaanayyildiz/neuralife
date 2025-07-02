@@ -20,8 +20,8 @@ import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image";
 
 const formSchema = z
   .object({
@@ -36,14 +36,14 @@ const formSchema = z
   });
 
 export const SignUpView = () => {
-  const router = useRouter();
 
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsPending] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -51,20 +51,22 @@ export const SignUpView = () => {
   });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
+    setIsPending(true);
+    setError(null);
     authClient.signUp.email(
       {
         name: data.name,
         email: data.email,
         password: data.password,
+        callbackURL: '/',
       },
       {
         onSuccess: () => {
-          router.push("/");
+          setIsPending(false);
         },
         onError: ({ error }) => {
           setError(error.message);
-          setIsLoading(false);
+          setIsPending(false);
         },
       }
     );
@@ -72,7 +74,7 @@ export const SignUpView = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen p-4 gap-4">
-      <img src="/neura.svg" alt="Neura" className="w-[50px] h-[50px]" />
+      <Image src="/neura.svg" alt="Neura" width={50} height={50} />
       <div className="flex flex-col p-2 items-center justify-center">
       <h1 className="text-2xl font-bold">Let&apos;s get you started</h1>
       <p className="text-sm text-muted-foreground">
@@ -98,7 +100,7 @@ export const SignUpView = () => {
                               placeholder="John Doe"
                               {...field}
                               className={cn(
-                                "h-10 w-full min-w-0 rounded-md md:text-sm"
+                                "h-14 w-full min-w-0 rounded-md md:text-sm"
                               )}
                             />
                           </FormControl>
@@ -107,6 +109,7 @@ export const SignUpView = () => {
                       )}
                     />
                     <FormField
+                      control={form.control}
                       name="email"
                       render={({ field }) => (
                         <FormItem className="w-full">
@@ -117,7 +120,7 @@ export const SignUpView = () => {
                               placeholder="mail@example.com"
                               {...field}
                               className={cn(
-                                "h-10 w-full min-w-0 rounded-md md:text-sm"
+                                "h-14 w-full min-w-0 rounded-md md:text-sm"
                               )}
                             />
                           </FormControl>
@@ -137,7 +140,7 @@ export const SignUpView = () => {
                               placeholder="********"
                               {...field}
                               className={cn(
-                                "h-10 w-full min-w-0 rounded-md md:text-sm"
+                                "h-14 w-full min-w-0 rounded-md md:text-sm"
                               )}
                             />
                           </FormControl>
@@ -157,7 +160,7 @@ export const SignUpView = () => {
                               placeholder="********"
                               {...field}
                               className={cn(
-                                "h-10 w-full min-w-0 rounded-md md:text-sm"
+                                "h-14 w-full min-w-0 rounded-md md:text-sm"
                               )}
                             />
                           </FormControl>
@@ -178,7 +181,8 @@ export const SignUpView = () => {
                     <Button
                       disabled={isLoading}
                       type="submit"
-                      className="w-full bg-[#0f0f0f] cursor-pointer"
+                      className="w-full cursor-pointer"
+                      size="lg"
                     >
                       {isLoading ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -186,27 +190,7 @@ export const SignUpView = () => {
                         "Create Your Account"
                       )}
                     </Button>
-                    <div className="flex items-center w-full my-2">
-                      <div className="flex-1 h-px bg-border" />
-                      <span className="mx-3 text-sm text-muted-foreground whitespace-nowrap">
-                        Or continue with
-                      </span>
-                      <div className="flex-1 h-px bg-border" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 w-full">
-                      <Button
-                        variant="outline"
-                        className="w-full bg-white text-black"
-                      >
-                        Google
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full bg-white text-black"
-                      >
-                        Apple
-                      </Button>
-                    </div>
+                    
 
                     <p className="text-sm text-muted-foreground">
                       Already have an account?{" "}
