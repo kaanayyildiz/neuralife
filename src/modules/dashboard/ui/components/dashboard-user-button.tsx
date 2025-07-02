@@ -1,29 +1,84 @@
 import { authClient } from "@/lib/auth-client";
-import { 
-  DropdownMenuTrigger, 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator 
+import {
+  DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import GeneratedAvatar from "@/components/generated-avatar";
-import { 
-  User, 
-  CreditCard, 
-  Bell, 
-  LogOut, 
-  ChevronDown 
-} from "lucide-react";
+import { User, CreditCard, Bell, LogOut, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
 
 const DashboardUserButton = () => {
   const router = useRouter();
+  const isMobile = useIsMobile();
   const { data, isPending } = authClient.useSession();
 
   if (isPending || !data?.user) {
     return null;
+  }
+
+  if (isMobile) {
+    return (
+      <Drawer>
+        <DrawerTrigger className="cursor-pointer rounded-lg border border-accent-foreground/30 hover:border-accent-foreground/80 p-2.5 w-full flex items-center justify-between bg-white overflow-hidden">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            {data.user.image ? (
+              <Avatar className="rounded-lg">
+                <AvatarImage src={data.user.image} />
+              </Avatar>
+            ) : (
+              <GeneratedAvatar
+                seed={data.user.name}
+                variant="initials"
+                className="size-9"
+              />
+            )}
+            <div className="flex flex-col text-left overflow-hidden flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{data.user.name}</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {data.user.email}
+              </p>
+            </div>
+          </div>
+          <ChevronDown className="size-4 text-muted-foreground shrink-0" />
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>{data.user.name}</DrawerTitle>
+            <DrawerDescription>{data.user.email}</DrawerDescription>
+          </DrawerHeader>
+          <DrawerFooter>
+            <Button variant="outline" className="cursor-pointer">
+              <span>Account</span>
+            </Button>
+            <Button variant="outline" className="cursor-pointer">
+              <span>Billing</span>
+            </Button>
+            <Button variant="outline" className="cursor-pointer">
+              <span>Notifications</span>
+            </Button>
+            <Button variant="outline" className="cursor-pointer">
+              <span>Log out</span>
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    );
   }
 
   const onLogout = () => {
@@ -45,16 +100,22 @@ const DashboardUserButton = () => {
               <AvatarImage src={data.user.image} />
             </Avatar>
           ) : (
-            <GeneratedAvatar seed={data.user.name} variant="initials" className="size-9" />
+            <GeneratedAvatar
+              seed={data.user.name}
+              variant="initials"
+              className="size-9"
+            />
           )}
           <div className="flex flex-col text-left overflow-hidden flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{data.user.name}</p>
-            <p className="text-xs text-muted-foreground truncate">{data.user.email}</p>
+            <p className="text-xs text-muted-foreground truncate">
+              {data.user.email}
+            </p>
           </div>
         </div>
         <ChevronDown className="size-4 text-muted-foreground shrink-0" />
       </DropdownMenuTrigger>
-      
+
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex items-center gap-3">
@@ -63,11 +124,19 @@ const DashboardUserButton = () => {
                 <AvatarImage src={data.user.image} />
               </Avatar>
             ) : (
-              <GeneratedAvatar seed={data.user.name} variant="initials" className="size-9" />
+              <GeneratedAvatar
+                seed={data.user.name}
+                variant="initials"
+                className="size-9"
+              />
             )}
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">{data.user.name}</p>
-              <p className="text-xs leading-none text-muted-foreground">{data.user.email}</p>
+              <p className="text-sm font-medium leading-none">
+                {data.user.name}
+              </p>
+              <p className="text-xs leading-none text-muted-foreground">
+                {data.user.email}
+              </p>
             </div>
           </div>
         </DropdownMenuLabel>
@@ -85,9 +154,13 @@ const DashboardUserButton = () => {
           <span>Notifications</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={onLogout} variant="destructive" className="cursor-pointer">
-            <LogOut className="mr-2 size-4" />
-            <span>Log out</span>
+        <DropdownMenuItem
+          onClick={onLogout}
+          variant="destructive"
+          className="cursor-pointer"
+        >
+          <LogOut className="mr-2 size-4" />
+          <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
