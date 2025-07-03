@@ -12,13 +12,11 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { BotIcon, VideoIcon, StarIcon, LogOutIcon } from "lucide-react";
+import { BotIcon, VideoIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import DashboardUserButton from "./dashboard-user-button";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
 
 const firstSection = [
   {
@@ -41,9 +39,7 @@ const secondSection = [
   },
 ];
 
-
 const DashboardSidebar = () => {
-
   const pathname = usePathname();
   return (
     <Sidebar>
@@ -82,21 +78,24 @@ const DashboardSidebar = () => {
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
-          
         </SidebarGroup>
         <Separator className="opacity-10" />
         <SidebarGroup>
           <SidebarMenu>
             {secondSection.map((item) => (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild
+                <SidebarMenuButton
+                  asChild
                   className={cn(
                     "h-10 hover:bg-linear-to-r/oklch border border-transparent bg-primary-foreground/10",
                     pathname === item.href && "bg-linear-to-r/oklch"
                   )}
                   isActive={pathname === item.href}
+                >
+                  <Link
+                    href={item.href}
+                    className="flex items-center gap-2 text-sm font-normal tracking-tight text-primary-foreground"
                   >
-                  <Link href={item.href} className="flex items-center gap-2 text-sm font-normal tracking-tight text-primary-foreground">
                     {item.icon} {item.title}
                   </Link>
                 </SidebarMenuButton>
@@ -109,10 +108,6 @@ const DashboardSidebar = () => {
         <Separator className="opacity-10" />
         <div className="flex flex-col gap-2">
           <DashboardUserButton />
-          <Button variant="ghost" size="sm" className="w-full justify-start text-primary-foreground cursor-pointer" onClick={() => authClient.signOut()}>
-            <LogOutIcon className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
         </div>
       </SidebarFooter>
     </Sidebar>

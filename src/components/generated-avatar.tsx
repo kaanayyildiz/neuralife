@@ -32,9 +32,9 @@ export const GeneratedAvatar = ({
     }
 
     return (
-        <Avatar className={cn(className)}>
+        <Avatar className={cn("rounded-lg grayscale", className)}>
             <AvatarImage src={avatar?.toDataUri()} />
-            <AvatarFallback>
+            <AvatarFallback className="rounded-lg">
                 {seed.charAt(0)}
             </AvatarFallback>
         </Avatar>
